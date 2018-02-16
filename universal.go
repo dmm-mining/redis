@@ -39,7 +39,12 @@ type UniversalOptions struct {
 	PoolTimeout        time.Duration
 	IdleTimeout        time.Duration
 	IdleCheckFrequency time.Duration
-	TLSConfig          tls.Config
+	TLSConfig          *tls.Config
+	TLSConfigs         map[string]*tls.Config
+}
+
+func (o *UniversalOptions) Cluster() *ClusterOptions {
+	return o.cluster()
 }
 
 func (o *UniversalOptions) cluster() *ClusterOptions {
@@ -62,7 +67,7 @@ func (o *UniversalOptions) cluster() *ClusterOptions {
 		PoolTimeout:        o.PoolTimeout,
 		IdleTimeout:        o.IdleTimeout,
 		IdleCheckFrequency: o.IdleCheckFrequency,
-		TLSConfig:          o.TLSConfig,
+		TLSConfigs:         o.TLSConfigs,
 	}
 }
 
@@ -86,6 +91,10 @@ func (o *UniversalOptions) failover() *FailoverOptions {
 		IdleTimeout:        o.IdleTimeout,
 		IdleCheckFrequency: o.IdleCheckFrequency,
 	}
+}
+
+func (o *UniversalOptions) Simple() *Options {
+	return o.simple()
 }
 
 func (o *UniversalOptions) simple() *Options {
