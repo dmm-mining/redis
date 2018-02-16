@@ -5,7 +5,7 @@ package redis
 import (
 	"context"
 
-	"github.com/go-redis/redis/internal/pool"
+	"github.com/dmm-mining/redis/internal/pool"
 )
 
 type baseClient struct {

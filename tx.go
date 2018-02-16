@@ -1,8 +1,8 @@
 package redis
 
 import (
-	"github.com/go-redis/redis/internal"
-	"github.com/go-redis/redis/internal/pool"
+	"github.com/dmm-mining/redis/internal"
+	"github.com/dmm-mining/redis/internal/pool"
 )
 
 // TxFailedErr transaction redis failed.
