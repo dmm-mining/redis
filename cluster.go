@@ -54,7 +54,7 @@ type ClusterOptions struct {
 	IdleTimeout        time.Duration
 	IdleCheckFrequency time.Duration
 
-	TLSConfigs map[string]*tls.Config
+	TLSConfig *tls.Config
 }
 
 func (opt *ClusterOptions) init() {
@@ -95,19 +95,8 @@ func (opt *ClusterOptions) init() {
 	}
 }
 
-func (opt *ClusterOptions) clientOptionsWithoutTLS() *Options {
-	return opt.clientOptions("")
-}
-
-func (opt *ClusterOptions) clientOptions(addr string) *Options {
+func (opt *ClusterOptions) clientOptions() *Options {
 	const disableIdleCheck = -1
-
-	var tlsConf *tls.Config
-	if len(addr) != 0 {
-		tlsConf = opt.TLSConfigs[addr]
-	} else {
-		tlsConf = nil
-	}
 
 	return &Options{
 		OnConnect: opt.OnConnect,
@@ -128,7 +117,7 @@ func (opt *ClusterOptions) clientOptions(addr string) *Options {
 
 		IdleCheckFrequency: disableIdleCheck,
 
-		TLSConfig: tlsConf,
+		TLSConfig: opt.TLSConfig,
 	}
 }
 
@@ -143,8 +132,9 @@ type clusterNode struct {
 }
 
 func newClusterNode(clOpt *ClusterOptions, addr string) *clusterNode {
-	opt := clOpt.clientOptions(addr)
+	opt := clOpt.clientOptions()
 	opt.Addr = addr
+
 	node := clusterNode{
 		Client: NewClient(opt),
 	}
@@ -1281,7 +1271,7 @@ func (c *ClusterClient) txPipelineReadQueued(
 }
 
 func (c *ClusterClient) pubSub(channels []string) *PubSub {
-	opt := c.opt.clientOptionsWithoutTLS()
+	opt := c.opt.clientOptions()
 
 	var node *clusterNode
 	return &PubSub{
